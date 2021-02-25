@@ -1,0 +1,116 @@
+<aura:component controller='MoneytrackingController' implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute Name="MoneyTrackingList" Type="List" Default=""/>
+    <aura:attribute Name="MTListAvailable" Type="Boolean" Default="false"/>
+    <aura:attribute Name="EmptyCheck" Type="Boolean" Default="false"/>
+    <aura:attribute Name="TargetUserFlag" Type="Boolean" Default="true"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="LastTotal" type="String" default=""/>
+    <aura:attribute name="Line" type="String" default=""/>
+    <aura:attribute name="selectedTargetUserLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="EntryUserId" type="String" default=""/>
+    <aura:attribute name="EntryUserName" type="String" default=""/>
+    <aura:attribute name="TargetUserName" type="String" default=""/>
+    <aura:attribute name="inputAccessKey" type="String" default=""/>
+    <aura:attribute name="rowNumberMax" type="String" default=""/>
+    <aura:attribute name="rowNumberMin" type="String" default=""/>
+    
+    <div style="min-height:40vh">
+        <aura:renderif isTrue="{!v.TargetUserFlag}">
+            <div style="text-align: center;">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-size_1-of-1">
+                        <c:reusableLookup objectAPIName="Target_User__c" IconName="standard:people" require="true" label="Target User" selectedRecord="{!v.selectedTargetUserLookUpRecord}" FilterId="{!v.EntryUserId}"/>
+                    </div>
+                </div>
+                <div class="slds-grid slds-wrap" style="text-align: center;">
+                    <lightning:input type="password" name="Enter Your Access Key" label="" value="{!v.inputAccessKey}" placeholder="Enter Your Access Key..."/>
+                </div>
+                <br/>
+                <lightning:button variant="brand" label="Get Details" title="Get Details" onclick="{!c.getDetails}" />
+            </div>
+        </aura:renderif>
+        
+        <aura:if isTrue="{!v.MTListAvailable}">
+            <Lightning:card>
+                <table class="slds-table slds-table_bordered slds-border_left slds-border_right slds-table_cell-buffer">
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <th class="slds-cell-wrap" scope="col">
+                                <span class="slds-truncate" title="UserName">User Name</span>      
+                            </th>
+                            <th class="slds-cell-wrap" scope="col">
+                                <span class="slds-truncate" title="DueAmount">Due</span>
+                            </th>
+                            <th class="slds-cell-wrap" scope="col">
+                                <span class="slds-truncate" title="PaidAmount">Paid</span>
+                            </th>
+                            <th class="slds-cell-wrap" scope="col">
+                                <span class="slds-truncate" title="DateTimeValue">Date</span>
+                            </th>
+                            <th class="slds-cell-wrap" scope="col">
+                                <span class="slds-truncate" title="Why">Why?</span>
+                            </th>
+                            <th class="slds-cell-wrap" scope="col">
+                                <span class="slds-truncate" title="Action">Action</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <aura:iteration items="{!v.MoneyTrackingList}" var="tt">
+                            <aura:if isTrue="{!and((v.LastTotal != tt.UserName),(v.Line != tt.UserName))}">
+                                <tr>
+                                    <td style="{!v.EntryUserName == tt.UserName?'background-color:#E7C68D;min-width:200px':'background-color:#ACB3B6;min-width:200px'}" role="gridcell" class="slds-cell-wrap" scope="row" data-label="UserName">
+                                        {!tt.UserName}
+                                    </td>
+                                    <td style="background-color:#F79378" role="gridcell" class="slds-cell-wrap" scope="row" data-label="DueAmount">
+                                        {!tt.DueAmount}
+                                    </td>
+                                    <td style="background-color:#6AA960" role="gridcell" class="slds-cell-wrap" scope="row" data-label="PaidAmount">
+                                        {!tt.PaidAmount}
+                                    </td>
+                                    <td style="background-color:#C5BDAF;min-width:130px" role="gridcell" class="slds-cell-wrap" scope="row" data-label="DateTimeValue">
+                                        {!tt.DateTimeValue}
+                                    </td>
+                                    <td style="background-color:#C5BDAF" role="gridcell" class="slds-cell-wrap" scope="row" data-label="Why">
+                                        {!tt.Why}
+                                    </td>
+                                    <td style="background-color:#C5BDAF" role="gridcell" class="slds-cell-wrap" scope="row" data-label="Action">
+                                        <lightning:icon iconName="action:more" alternativeText="more" aura:id="boxPack" valuee="{!tt.mtId}" onclick="{!c.moreClick}" title="more" size="x-small"/>
+                                    </td>
+                                </tr>
+                            </aura:if>
+                            <aura:if isTrue="{!or((v.LastTotal == tt.UserName),(v.Line == tt.UserName))}">
+                                <tr style="font-weight:bold">
+                                    <td  role="gridcell" class="slds-cell-wrap" scope="row" data-label="UserName">
+                                        {!tt.UserName}
+                                    </td>
+                                </tr>
+                            </aura:if>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                <span class="slds-float_right">
+                    <lightning:buttonIcon iconName="utility:back" variant="brand" alternativeText="Back" title="back" onclick="{!c.reset}"/>
+                    <lightning:buttonIcon iconName="utility:chevronleft" variant="brand" alternativeText="Previous" title="Previous" onclick="{!c.previousClick}"/>
+                    <lightning:buttonIcon iconName="utility:chevronright" variant="brand" alternativeText="Next" title="Next" onclick="{!c.nextClick}"/>
+                </span>
+            </Lightning:card>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.EmptyCheck}">
+            <br/><br/><br/><br/><br/><br/>
+            <div class="" style="padding:0.5rem;background:#16325c">
+                <div class="slds-text-color_inverse slds-text-align_center"><span style="text-shadow:2px 2px 3px #f7a233;">!!!No Money Tracking Record Available For This User!!!</span></div>
+            </div>
+            <br/>
+            <lightning:button variant="brand" label="Back" title="Reset" onclick="{!c.reset}" class="slds-float_right"/>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.Spinner}">
+            <lightning:spinner variant="brand"  size="large" />
+        </aura:if>
+    </div>
+    
+</aura:component>

@@ -1,0 +1,25 @@
+<aura:component controller="AccessKeyController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="AccessKey" type="String" default=""/>
+    <aura:attribute name="verifyAccessKey" type="String" default=""/>
+    <aura:attribute name="OTP" type="String" default=""/>
+    <aura:attribute name="inputOTP" type="String" default=""/>
+    <aura:attribute name="sendMailFlag" type="Boolean" default="true"/>
+    <aura:attribute name="OTPVerifyFlag" type="Boolean" default="false"/>
+    <aura:attribute name="AccessKeyFlag" type="Boolean" default="false"/>
+    
+    <aura:if isTrue="{!v.sendMailFlag}">
+        <lightning:button variant="brand-outline" label="Send OTP to Email" title="Verification" onclick="{!c.sendOTP}" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.OTPVerifyFlag}">
+        <lightning:input name="Enter OTP" label="" value="{!v.inputOTP}" placeholder="Enter OTP..."/>
+        <lightning:button variant="brand" label="Submit" title="Submit OTP" onclick="{! c.verifyOTP }" />
+    </aura:if>
+    
+    <aura:if isTrue="{!v.AccessKeyFlag}">
+        <lightning:input name="enter Access Key" label="" value="{!v.AccessKey}" placeholder="Enter New Access Key..."/>
+        <lightning:input name="verify Access Key" label="" value="{!v.verifyAccessKey}" placeholder="Confirm Access Key..."/>
+        <lightning:button variant="brand" label="Submit" title="Submit Access Key" onclick="{! c.accessKeySet }" />
+    </aura:if>
+    
+</aura:component>

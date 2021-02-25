@@ -1,0 +1,53 @@
+<aura:component controller='MoneytrackingController' implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name="MoneyTrackingObj" type="Money_Tracking__c" default="{'sobjectType':'Money_Tracking__c'}"/>
+    <aura:attribute name="inputAccessKey" type="String" default=""/>
+    <aura:attribute name="isAccess" type="boolean" default="false"/>
+    <aura:attribute name="AccessOrNot" type="boolean" default="true"/>
+    <aura:attribute name="Spinner" type="boolean" default="true"/>
+    <aura:attribute name="selectedEntryUserLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="selectedTargetUserLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="selectedMoneyReportLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="MoneyReportId" type="String" default=""/>
+    <aura:attribute name="EntryUserId" type="String" default=""/>
+    <aura:attribute name="Amount" type="Decimal" default=""/>
+    <aura:attribute name="Type" type="String" default="Due"/>
+    <aura:attribute name="Why" type="String" default=""/>
+    <aura:attribute name="typeValue" type="String[]" default="Due,Paid"/>
+    
+    
+    <lightning:card>
+        <aura:if isTrue="{!v.AccessOrNot}">
+            <lightning:input type="password" name="Enter Access Key" label="" value="{!v.inputAccessKey}" placeholder="Enter Access Key..."/>
+            <lightning:button variant="brand-outline" label="Validate" title="Access Key Validate" onclick="{!c.AKValidate}" />
+        </aura:if>
+        
+        <aura:renderIf isTrue="{!v.isAccess}">
+            <div class="slds-modal__header">
+                <h2 class="slds-text-heading_medium">Money Entry</h2>
+            </div>
+            
+            <lightning:card title="">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-size_1-of-2" style="padding-right: 25px;">
+                        <c:reusableLookup objectAPIName="Target_User__c" IconName="custom:custom21" require="true" label="Target User" selectedRecord="{!v.selectedTargetUserLookUpRecord}" FilterId="{!v.EntryUserId}"/>
+                    </div> 
+                </div>
+                <lightning:input type="number" name="inputAmount" label="Amount" value="{!v.Amount}" required="true" formatter="currency" step="0.01"/>
+                <lightning:select name="select" label="Select Type" required="true" value="{!v.Type}">
+                    <aura:iteration items="{!v.typeValue}" var="typ">
+                        <option text="{!typ}"></option>
+                    </aura:iteration>
+                </lightning:select>
+                <lightning:textarea name="inputWhy" required="true" value="{!v.Why}" label="Why?" maxlength="60" />
+                <lightning:button type="submit" variant="brand" name="Submit" label="Save" onclick="{!c.saveRecord}" class="slds-m-top_medium"/>
+            </lightning:card>
+        </aura:renderIf>
+        
+        <aura:if isTrue="{!v.Spinner}">
+            <lightning:spinner alternativeText="Loading" size="large" />
+        </aura:if>
+    </lightning:card>
+    
+</aura:component>

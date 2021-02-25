@@ -1,0 +1,125 @@
+<aura:component controller="reusableLookupApexController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <!--declare attributes--> 
+    <aura:attribute name="selectedRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="lstSelectedRecords" type="sObject[]" default="[]" description="Use,for store SELECTED sObject Records"/>
+    
+    <aura:attribute name="selectedProgramRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords" type="List" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="objectAPIName" type="string" default=""/>
+    <aura:attribute name="IconName" type="string" default=""/>
+    <aura:attribute name="label" type="string" default=""/>
+    <aura:attribute name="Message" type="String" default=""/>
+    <aura:attribute name="BrokerId" type="String" />
+    <aura:attribute name="ParentObjectName" type="String" default=""/>
+    <aura:attribute name="uId" type="String" default=""/>
+    <aura:attribute name="multiplelookup" type="boolean" default="false"/>
+    <aura:attribute name="usablity" type="String" default =""/>
+    <!--end-->    
+    <!--Filter attribute-->
+    <aura:attribute name="FilterId" type="String" default=""/>
+    <aura:attribute name="SelectedPortfolioRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedOrgRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedProgramRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedProjectRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedDeliverableRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedWorkPackageRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedSourceSystemRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedSourceDataStoreRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedSourceDataStoreElementRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedTargetSystemRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedTargetDataStoreRecordId" type="String" default=""/>
+    <aura:attribute name="SelectedTargetDataStoreElementRecordId" type="String" default=""/>
+    <aura:attribute name="bpIdforSuccesorAndPredecessorRecordId" type="String" default=""/>
+    <aura:attribute name="sucessorOrPredecessor" type="String" default=""/>
+    <aura:attribute name="BusinessLevel" type="Integer" default=""/>
+    <aura:attribute name="BusinessPrefix" type="String" default=""/>
+    <aura:attribute name="require" type="boolean" default="false"/>
+    <aura:attribute name="elementry" type="boolean" default="false"/>
+    <aura:attribute name="onRecordId" type="String" default=""/>
+    <aura:attribute name="onObjectName" type="String" default=""/>    
+    <aura:attribute name="onProgram" type="String" default=""/>
+    <aura:attribute name="parentRecord" type="String" default=""/>
+    <aura:attribute name="readOnly" type="boolean" default="false"/>
+    
+    <aura:method name="clearFromParent" action="{!c.clear}" description="clear function call from Parent component"/>
+    
+    <!--end-->
+    
+    <!--intial handler-->
+    
+    
+    <!--BrokerId: <ui:outputText class="slds-output"  value="{!v.BrokerId}"/>-->
+    
+    <!--#########Please Open It When you want to know or debug about custom look up###########
+    <ui:outputText class="slds-output" value="{!v.RecordId}"/>
+    
+    
+    <ui:outputText class="slds-output" value="{!v.selectedRecord.Name}"/>
+    -->
+    <!--<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>-->
+    <!--<aura:handler event="aura:doneRendering" action="{!c.doInit}" />-->
+    <aura:handler name="change" value="{!v.BrokerId}" action="{!c.doInit}"/>
+    <!--declare events hendlers-->  
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedObjectRecordEvent" action="{!c.handleComponentEvent}"/>
+    <aura:method name="clearData" action="{!c.clear}" access="global"/>
+    
+    
+    <!-- https://www.lightningdesignsystem.com/components/lookups/ --> 
+    <!--<ui:outputText class="slds-output" value="{!v.IssueId}"/>-->    
+    <!--<c:WorkPackageNewANDEditButtonOverRide SelectedProgramId="{!v.selectedRecord.Id}"/>-->
+    <span aura:id="NameHover" class="slds-hide">{!v.selectedRecord.Name}</span>
+    <div aura:id="searchRes" onmouseleave="{!c.onblur}" class="slds-form-element slds-lookup slds-is-close " data-select="single" onmouseover="{!c.onhover}">
+        <label class="slds-form-element__label" for="lookup-348"> <aura:renderIf isTrue="{!v.require}"><span aura:id="required" style="color:red;">*&nbsp;</span> </aura:renderIf> {!v.label}</label>
+        <!--This part is for display search bar for lookup-->  
+        <div class="slds-form-element__control">
+            
+            <div class="slds-input-has-icon slds-input-has-icon--right">
+                
+                <lightning:icon aura:id="utilitySearch" class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/> 
+                <!-- This markup is for when an record is selected -->
+                <!--Validation Lookup using Aura:method-->
+                
+                <!--end-->
+                <!--<aura:if isTrue="{!(!v.multiplelookup)}">-->
+                <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                    <lightning:pill class="pillSize" label="{!v.selectedRecord.Name}" name="{!v.selectedRecord.Name}" onremove="{!c.clear }">
+                        
+                        <aura:set attribute="media">
+                            <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                        </aura:set>
+                    </lightning:pill>
+                    
+                </div>
+                <!--</aura:if>-->
+                <!--<aura:if isTrue="{!v.multiplelookup}">
+                hello
+                <aura:iteration items="{!v.lstSelectedRecords}" var="sr">
+                        <lightning:pill class="slds-m-around_xx-small" label="{!sr.Name}" name="{!sr.Id}" onremove="{! c.clear }">
+                            <aura:set attribute="media">
+                                <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                            </aura:set>
+                        </lightning:pill>
+                    </aura:iteration>
+                </aura:if>-->
+                <div aura:id="lookupField" class="slds-show">
+                    <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                        <span class="slds-assistive-text"></span>
+                    </span>
+                    <ui:inputText click="{!c.onfocus}" updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord}" placeholder="search.."/>
+                </div>
+                
+            </div>
+        </div>
+        <!--This part is for Display typehead lookup result List-->  
+        <ul style="min-height:40px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+            <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+            <center> <div onclick="{!c.create}" style="cursor: pointer;" onmouseleave="{!c.MessageBlur}">{!v.Message}</div></center>
+            <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                <c:reusableAuraLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+            </aura:iteration>
+        </ul>
+    </div>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+</aura:component>
