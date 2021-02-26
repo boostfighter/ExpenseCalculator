@@ -99,16 +99,17 @@
         });
         action.setCallback(this,function(response){
             var state = response.getState();
+            console.log('state-------------'+state);
             if(state=='SUCCESS'){
                 var resp = response.getReturnValue();
                 var res = resp.reverse();
                 if(res.length>0){
+                    component.set("v.Spinner",false);
                     component.set("v.rowNumberMin",res[0].rowNumber);
                     component.set("v.rowNumberMax",res[res.length-3].rowNumber);
                     console.log('prev rowNumberMin-->'+res[0].rowNumber);
                     console.log('prev rowNumberMax-->'+res[res.length-3].rowNumber);
                     component.set("v.MoneyTrackingList",res);
-                    component.set("v.Spinner",false);
                 }else{
                     var toastEvent = $A.get("e.force:showToast");
                     toastEvent.setParams({
@@ -142,6 +143,7 @@
             var state = response.getState();
             if(state=='SUCCESS'){
                 var res = response.getReturnValue();
+                component.set("v.Spinner",false);
                 //var res = resp.reverse();
                 if(res.length>0){
                     component.set("v.rowNumberMin",res[0].rowNumber);
@@ -149,7 +151,7 @@
                     console.log('prev rowNumberMin-->'+res[0].rowNumber);
                     console.log('prev rowNumberMax-->'+res[res.length-3].rowNumber);
                     component.set("v.MoneyTrackingList",res);
-                    component.set("v.Spinner",false);
+                    
                 }else{
                     var toastEvent = $A.get("e.force:showToast");
                     toastEvent.setParams({
